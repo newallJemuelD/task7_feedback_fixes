@@ -42,10 +42,11 @@ class _MainScreenState extends State<HomePage> {
                         if (state is ResultState) {
                           inputValue = state.value.toString();
                         }
-                        return CustomPaint(
-                          size: const Size(250, 250),
-                          painter: SpeedOMeter(
-                              inputValue: int.parse(inputValue ?? '0')),
+                        return SpeedOMeter(
+                          context: context,
+                          sColor: Colors.red,
+                          rColor: Colors.green,
+                          inputValue: inputValue,
                         );
                       }),
                       // ),

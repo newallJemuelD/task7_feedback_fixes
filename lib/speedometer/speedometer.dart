@@ -2,8 +2,47 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-class SpeedOMeter extends CustomPainter {
-  SpeedOMeter({
+class SpeedOMeter extends StatelessWidget {
+  final BuildContext context;
+  final MaterialColor sColor;
+  final MaterialColor rColor;
+  const SpeedOMeter({
+    Key? key,
+    required this.context,
+    required this.sColor,
+    required this.rColor,
+    required this.inputValue,
+  }) : super(key: key);
+
+  final String? inputValue;
+
+  @override
+  Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+
+    return CustomPaint(
+      size: width > 390
+          ? Size(width / 1.57, height / 2.7)
+          : Size(width / 1.57, height / 2.5),
+      painter: SpeedOMeterPainter(
+        context: context,
+        sColor: sColor,
+        rColor: rColor,
+        inputValue: int.parse(inputValue ?? '0'),
+      ),
+    );
+  }
+}
+
+class SpeedOMeterPainter extends CustomPainter {
+  MaterialColor sColor;
+  MaterialColor rColor;
+  BuildContext context;
+  SpeedOMeterPainter({
+    required this.context,
+    required this.sColor,
+    required this.rColor,
     required this.inputValue,
   });
 
@@ -25,18 +64,18 @@ class SpeedOMeter extends CustomPainter {
     var radius = size.width / 2;
 
     var redSection = Paint()
-      ..color = Colors.red
+      ..color = sColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 13;
 
-    var startAngel180 = piValue;
+    var angel180 = piValue;
     canvas.drawArc(
         Rect.fromCenter(
           center: Offset(size.width / 2, size.height / 2),
           width: size.width,
           height: size.height,
         ),
-        startAngel180,
+        angel180,
         archAngle - gapAngle,
         false,
         redSection);
@@ -66,7 +105,7 @@ class SpeedOMeter extends CustomPainter {
         redSection);
 
     var greenSection = Paint()
-      ..color = Colors.green
+      ..color = rColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 13;
 
@@ -129,7 +168,7 @@ class SpeedOMeter extends CustomPainter {
     var compassEndY = circleRadius - (compassLength * math.sin(degreeVal));
 
     Paint compassPaint = Paint()
-      ..color = Colors.black
+      ..color = Theme.of(context).iconTheme.color!
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3;
     canvas.drawLine(
@@ -149,7 +188,7 @@ class SpeedOMeter extends CustomPainter {
 
 //Speedometer labels
     final TextPainter textPainter = TextPainter(
-        text: const TextSpan(text: 'S3', style: TextStyle(color: Colors.red)),
+        text: TextSpan(text: 'S3', style: TextStyle(color: sColor)),
         textDirection: TextDirection.ltr)
       ..layout(maxWidth: size.width);
     textPainter.paint(canvas, Offset(-30, size.height / 2));
@@ -162,7 +201,7 @@ class SpeedOMeter extends CustomPainter {
         30 * math.tan(degreeToRadian(30));
     var offsetS2 = Offset(dx, dy);
     final TextPainter textPainter2 = TextPainter(
-        text: const TextSpan(text: 'S2', style: TextStyle(color: Colors.red)),
+        text: TextSpan(text: 'S2', style: TextStyle(color: sColor)),
         textDirection: TextDirection.ltr)
       ..layout(maxWidth: size.width / 2);
     textPainter2.paint(canvas, offsetS2);
@@ -175,7 +214,7 @@ class SpeedOMeter extends CustomPainter {
         32 * math.tan(degreeToRadian(30));
     var offsetS1 = Offset(dx, dy);
     final TextPainter textPainter3 = TextPainter(
-        text: const TextSpan(text: 'S1', style: TextStyle(color: Colors.red)),
+        text: TextSpan(text: 'S1', style: TextStyle(color: sColor)),
         textDirection: TextDirection.ltr)
       ..layout(maxWidth: size.width);
     textPainter3.paint(canvas, offsetS1);
@@ -194,7 +233,7 @@ class SpeedOMeter extends CustomPainter {
     dy = size.height / 2;
     var offsetR3 = Offset(dx, dy);
     final TextPainter textPainter5 = TextPainter(
-        text: const TextSpan(text: 'R3', style: TextStyle(color: Colors.green)),
+        text: TextSpan(text: 'R3', style: TextStyle(color: rColor)),
         textDirection: TextDirection.ltr)
       ..layout(maxWidth: size.width);
     textPainter5.paint(canvas, offsetR3);
@@ -203,7 +242,7 @@ class SpeedOMeter extends CustomPainter {
     dy = radius - (radius * math.sin(degreeToRadian(40)));
     var offsetR2 = Offset(dx, dy);
     final TextPainter textPainter6 = TextPainter(
-        text: const TextSpan(text: 'R2', style: TextStyle(color: Colors.green)),
+        text: TextSpan(text: 'R2', style: TextStyle(color: rColor)),
         textDirection: TextDirection.ltr)
       ..layout(maxWidth: size.width);
     textPainter6.paint(canvas, offsetR2);
@@ -212,7 +251,7 @@ class SpeedOMeter extends CustomPainter {
     dy = radius - (radius * math.sin(degreeToRadian(90))) - 5;
     var offsetR1 = Offset(dx, dy);
     final TextPainter textPainter7 = TextPainter(
-        text: const TextSpan(text: 'R1', style: TextStyle(color: Colors.green)),
+        text: TextSpan(text: 'R1', style: TextStyle(color: rColor)),
         textDirection: TextDirection.ltr)
       ..layout(maxWidth: size.width);
     textPainter7.paint(canvas, offsetR1);

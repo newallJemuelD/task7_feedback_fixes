@@ -1,7 +1,7 @@
 abstract class SpeedOMeterEvent {}
 
 class ClickEvent extends SpeedOMeterEvent {
-  int eventValue;
+  dynamic eventValue;
 
   ClickEvent(this.eventValue);
 }
