@@ -77,8 +77,9 @@ class _MainScreenState extends State<HomePage> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(28),
-                          borderSide:
-                              const BorderSide(width: 2.0, color: Colors.blue),
+                          borderSide: BorderSide(
+                              width: 2.0,
+                              color: Theme.of(context).cardTheme.color!),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(28),
