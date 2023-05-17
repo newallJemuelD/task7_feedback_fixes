@@ -22,6 +22,7 @@ class _MainScreenState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: const Text(
           'Task 7 - Speedometer',
         ),
@@ -66,6 +67,9 @@ class _MainScreenState extends State<HomePage> {
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         hintText: 'Enter a value',
+                        hintStyle: TextStyle(
+                          color: Theme.of(context).iconTheme.color,
+                        ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(28),
                           borderSide:
