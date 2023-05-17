@@ -6,8 +6,10 @@ class SpeedOMeter extends StatelessWidget {
   final BuildContext context;
   final MaterialColor sColor;
   final MaterialColor rColor;
+  final double size;
   const SpeedOMeter({
     Key? key,
+    required this.size,
     required this.context,
     required this.sColor,
     required this.rColor,
@@ -18,18 +20,13 @@ class SpeedOMeter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-
     return CustomPaint(
-      size: width > 390
-          ? Size(width / 1.57, height / 2.7)
-          : Size(width / 1.57, height / 2.5),
+      size: Size(size, size),
       painter: SpeedOMeterPainter(
         context: context,
         sColor: sColor,
         rColor: rColor,
-        inputValue: int.parse(inputValue ?? '0'),
+        inputValue: double.parse(inputValue ?? '0'),
       ),
     );
   }
@@ -39,6 +36,7 @@ class SpeedOMeterPainter extends CustomPainter {
   MaterialColor sColor;
   MaterialColor rColor;
   BuildContext context;
+  double inputValue = 0.0;
   SpeedOMeterPainter({
     required this.context,
     required this.sColor,
@@ -46,10 +44,8 @@ class SpeedOMeterPainter extends CustomPainter {
     required this.inputValue,
   });
 
-  int inputValue = 0;
-  var minValue = 5;
-  var maxValue = 35;
-
+  double minValue = 5;
+  double maxValue = 35;
   double piValue = math.pi;
 
   double degreeToRadian(double degree) {
@@ -58,11 +54,18 @@ class SpeedOMeterPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    //Red and green speed indicator sections
     var archAngle = piValue / 6;
     var gapAngle = degreeToRadian(3);
     var radius = size.width / 2;
+    var circleRadius = size.width / 2;
+    var compassLength = (circleRadius) * 0.75;
+    if (inputValue < minValue) inputValue = minValue;
+    if (inputValue > maxValue) inputValue = maxValue;
+    var degreeVal = ((inputValue - minValue) * piValue) / (maxValue - minValue);
+    var compassEndX = circleRadius - (compassLength * math.cos(degreeVal));
+    var compassEndY = circleRadius - (compassLength * math.sin(degreeVal));
 
+    //Red and green speed indicator sections
     var redSection = Paint()
       ..color = sColor
       ..style = PaintingStyle.stroke
@@ -70,39 +73,30 @@ class SpeedOMeterPainter extends CustomPainter {
 
     var angel180 = piValue;
     canvas.drawArc(
-        Rect.fromCenter(
-          center: Offset(size.width / 2, size.height / 2),
-          width: size.width,
-          height: size.height,
-        ),
-        angel180,
-        archAngle - gapAngle,
-        false,
-        redSection);
+      _arcRect(size),
+      angel180,
+      archAngle - gapAngle,
+      false,
+      redSection,
+    );
 
     var angel210 = (7 * piValue) / 6;
     canvas.drawArc(
-        Rect.fromCenter(
-          center: Offset(size.width / 2, size.height / 2),
-          width: size.width,
-          height: size.height,
-        ),
-        angel210,
-        (archAngle - gapAngle),
-        false,
-        redSection);
+      _arcRect(size),
+      angel210,
+      (archAngle - gapAngle),
+      false,
+      redSection,
+    );
 
     var angel240 = (4 * piValue) / 3;
     canvas.drawArc(
-        Rect.fromCenter(
-          center: Offset(size.width / 2, size.height / 2),
-          width: size.width,
-          height: size.height,
-        ),
-        angel240,
-        (archAngle - gapAngle),
-        false,
-        redSection);
+      _arcRect(size),
+      angel240,
+      (archAngle - gapAngle),
+      false,
+      redSection,
+    );
 
     var greenSection = Paint()
       ..color = rColor
@@ -111,61 +105,40 @@ class SpeedOMeterPainter extends CustomPainter {
 
     var angel270 = (3 * piValue) / 2;
     canvas.drawArc(
-        Rect.fromCenter(
-          center: Offset(size.width / 2, size.height / 2),
-          width: size.width,
-          height: size.height,
-        ),
-        angel270,
-        (archAngle - gapAngle),
-        false,
-        greenSection);
+      _arcRect(size),
+      angel270,
+      (archAngle - gapAngle),
+      false,
+      greenSection,
+    );
 
     var angel300 = (5 * piValue) / 3;
     canvas.drawArc(
-        Rect.fromCenter(
-          center: Offset(size.width / 2, size.height / 2),
-          width: size.width,
-          height: size.height,
-        ),
-        angel300,
-        (archAngle - gapAngle),
-        false,
-        greenSection);
+      _arcRect(size),
+      angel300,
+      (archAngle - gapAngle),
+      false,
+      greenSection,
+    );
 
     var angel330 = (11 * piValue) / 6;
     canvas.drawArc(
-        Rect.fromCenter(
-          center: Offset(size.width / 2, size.height / 2),
-          width: size.width,
-          height: size.height,
-        ),
-        angel330,
-        (archAngle),
-        false,
-        greenSection);
+      _arcRect(size),
+      angel330,
+      (archAngle),
+      false,
+      greenSection,
+    );
 
 //Speedometer pointer
     Paint pivot1Paint = Paint()
-      ..color = Colors.black
+      ..color = Theme.of(context).iconTheme.color!
       ..style = PaintingStyle.fill;
     canvas.drawCircle(
       Offset(size.width / 2, size.height / 2),
       6,
       pivot1Paint,
     );
-
-    var circleRadius = size.width / 2;
-    var compassLength = (circleRadius) * 0.75;
-
-    if (inputValue < minValue) inputValue = minValue;
-
-    if (inputValue > maxValue) inputValue = maxValue;
-
-    var degreeVal = ((inputValue - minValue) * piValue) / (maxValue - minValue);
-
-    var compassEndX = circleRadius - (compassLength * math.cos(degreeVal));
-    var compassEndY = circleRadius - (compassLength * math.sin(degreeVal));
 
     Paint compassPaint = Paint()
       ..color = Theme.of(context).iconTheme.color!
@@ -178,7 +151,7 @@ class SpeedOMeterPainter extends CustomPainter {
     );
 
     Paint pivot2Paint = Paint()
-      ..color = Colors.white
+      ..color = Theme.of(context).scaffoldBackgroundColor
       ..style = PaintingStyle.fill;
     canvas.drawCircle(
       Offset(size.width / 2, size.height / 2),
@@ -223,13 +196,14 @@ class SpeedOMeterPainter extends CustomPainter {
     dy = -30;
     var offsetp = Offset(dx, dy);
     final TextPainter textPainter4 = TextPainter(
-        text: const TextSpan(
-            text: 'PIVOT', style: TextStyle(color: Colors.black)),
+        text: TextSpan(
+            text: 'PIVOT',
+            style: TextStyle(color: Theme.of(context).iconTheme.color)),
         textDirection: TextDirection.ltr)
       ..layout(maxWidth: size.width);
     textPainter4.paint(canvas, offsetp);
 
-    dx = size.width + 10;
+    dx = size.width + 12;
     dy = size.height / 2;
     var offsetR3 = Offset(dx, dy);
     final TextPainter textPainter5 = TextPainter(
@@ -238,8 +212,8 @@ class SpeedOMeterPainter extends CustomPainter {
       ..layout(maxWidth: size.width);
     textPainter5.paint(canvas, offsetR3);
 
-    dx = radius + (radius * math.cos(degreeToRadian(25)));
-    dy = radius - (radius * math.sin(degreeToRadian(40)));
+    dx = radius + (radius * math.cos(degreeToRadian(17)));
+    dy = radius - (radius * math.sin(degreeToRadian(35)));
     var offsetR2 = Offset(dx, dy);
     final TextPainter textPainter6 = TextPainter(
         text: TextSpan(text: 'R2', style: TextStyle(color: rColor)),
@@ -247,14 +221,23 @@ class SpeedOMeterPainter extends CustomPainter {
       ..layout(maxWidth: size.width);
     textPainter6.paint(canvas, offsetR2);
 
-    dx = radius + (radius * math.cos(degreeToRadian(60)));
-    dy = radius - (radius * math.sin(degreeToRadian(90))) - 5;
+    dx = radius + (radius * math.cos(degreeToRadian(57)));
+    dy = radius - (radius * math.sin(degreeToRadian(85))) - 5;
     var offsetR1 = Offset(dx, dy);
     final TextPainter textPainter7 = TextPainter(
         text: TextSpan(text: 'R1', style: TextStyle(color: rColor)),
         textDirection: TextDirection.ltr)
       ..layout(maxWidth: size.width);
     textPainter7.paint(canvas, offsetR1);
+  }
+
+//common code for drawing arc
+  Rect _arcRect(Size size) {
+    return Rect.fromCenter(
+      center: Offset(size.width / 2, size.height / 2),
+      width: size.width,
+      height: size.height,
+    );
   }
 
   @override

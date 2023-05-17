@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: AppTheme.lightTheme,
+      theme: AppTheme.darkTheme,
       home: BlocProvider(
         create: (context) => LogicBloc(value: 0),
         child: const HomePage(),

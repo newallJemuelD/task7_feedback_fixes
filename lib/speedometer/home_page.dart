@@ -22,7 +22,7 @@ class _MainScreenState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        foregroundColor: Theme.of(context).scaffoldBackgroundColor,
+        foregroundColor: Colors.white,
         title: const Text(
           'Task 7 - Speedometer',
         ),
@@ -45,6 +45,8 @@ class _MainScreenState extends State<HomePage> {
                         }
                         return SpeedOMeter(
                           context: context,
+                          //enter size value in the range of 200 to 320
+                          size: 250,
                           sColor: Colors.red,
                           rColor: Colors.green,
                           inputValue: inputValue,
@@ -65,6 +67,9 @@ class _MainScreenState extends State<HomePage> {
                       },
                       controller: myController,
                       keyboardType: TextInputType.number,
+                      style: TextStyle(
+                        color: Theme.of(context).iconTheme.color,
+                      ),
                       decoration: InputDecoration(
                         hintText: 'Enter a value',
                         hintStyle: TextStyle(
@@ -90,14 +95,14 @@ class _MainScreenState extends State<HomePage> {
                     onTap: () {
                       context
                           .read<LogicBloc>()
-                          .add((ClickEvent(int.parse(inputValue ?? '0'))));
+                          .add((ClickEvent(double.parse(inputValue ?? '0.0'))));
                       SystemChannels.textInput.invokeMethod('TextInput.hide');
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 8),
                       decoration: BoxDecoration(
-                        color: Colors.blue,
+                        color: Theme.of(context).cardTheme.color,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: const Text(
