@@ -17,6 +17,7 @@ class HomePage extends StatefulWidget {
 class _MainScreenState extends State<HomePage> {
   final myController = TextEditingController();
   String? inputValue;
+  bool isDarkMode = true;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +33,42 @@ class _MainScreenState extends State<HomePage> {
           padding: const EdgeInsets.all(15.0),
           child: Column(
             children: [
+              Row(
+                children: [
+                  BlocBuilder<LogicBloc, SpeedOMeterState>(
+                    builder: (context, state) {
+                      if (state is ThemeState) {
+                        return Switch.adaptive(
+                          value: state.themeChange,
+                          onChanged: (value) {
+                            context
+                                .read<LogicBloc>()
+                                .add((ThemeChangeEvent(value)));
+                          },
+                        );
+                      } else {
+                        return Switch.adaptive(
+                          value: true,
+                          onChanged: (value) {
+                            context
+                                .read<LogicBloc>()
+                                .add((ThemeChangeEvent(value)));
+                          },
+                        );
+                      }
+                    },
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    'Dark mode',
+                    style: TextStyle(
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                  ),
+                ],
+              ),
               Padding(
                 padding: const EdgeInsets.only(top: 80),
                 child: Row(
@@ -45,7 +82,7 @@ class _MainScreenState extends State<HomePage> {
                         }
                         return SpeedOMeter(
                           context: context,
-                          //enter size value in the range of 200 to 320
+                          //enter size value in the range of 200 to 300
                           size: 250,
                           sColor: Colors.red,
                           rColor: Colors.green,

@@ -6,8 +6,8 @@ class SpeedOMeter extends StatelessWidget {
   final BuildContext context;
   final MaterialColor sColor;
   final MaterialColor rColor;
-  final double size;
-  const SpeedOMeter({
+  double size;
+  SpeedOMeter({
     Key? key,
     required this.size,
     required this.context,
@@ -20,6 +20,16 @@ class SpeedOMeter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    if (size < 200) {
+      size = 200;
+    } else if (size > 300) {
+      size = screenWidth - 90;
+    } else {
+      size = size;
+    }
+
     return CustomPaint(
       size: Size(size, size),
       painter: SpeedOMeterPainter(

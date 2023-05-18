@@ -5,3 +5,9 @@ class ClickEvent extends SpeedOMeterEvent {
 
   ClickEvent(this.eventValue);
 }
+
+class ThemeChangeEvent extends SpeedOMeterEvent {
+  bool themeChange;
+
+  ThemeChangeEvent(this.themeChange);
+}
