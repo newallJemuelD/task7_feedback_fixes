@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:speedometer/speedometer/speedometer.dart';
 
-import '../bloc/event.dart';
-import '../bloc/logic_bloc.dart';
-import '../bloc/state.dart';
+import 'package:speedometer/bloc/theme_bloc/theme_bloc.dart';
+import 'package:speedometer/bloc/theme_bloc/theme_event.dart';
+import 'package:speedometer/bloc/theme_bloc/theme_state.dart';
+
+import 'package:speedometer/bloc/speedometer_bloc/speedometer_bloc.dart';
+import 'package:speedometer/bloc/speedometer_bloc/speedometer_event.dart';
+import 'package:speedometer/bloc/speedometer_bloc/speedometer_state.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -35,24 +40,26 @@ class _MainScreenState extends State<HomePage> {
             children: [
               Row(
                 children: [
-                  BlocBuilder<LogicBloc, SpeedOMeterState>(
+                  BlocBuilder<ThemeBloc, ThemeState>(
                     builder: (context, state) {
-                      if (state is ThemeState) {
+                      if (state is ThemeChangeState) {
                         return Switch.adaptive(
+                          activeColor: Theme.of(context).cardTheme.color,
                           value: state.themeChange,
                           onChanged: (value) {
                             context
-                                .read<LogicBloc>()
-                                .add((ThemeChangeEvent(value)));
+                                .read<ThemeBloc>()
+                                .add((ThemeChangedEvent(value)));
                           },
                         );
                       } else {
                         return Switch.adaptive(
+                          activeColor: Theme.of(context).cardTheme.color,
                           value: true,
                           onChanged: (value) {
                             context
-                                .read<LogicBloc>()
-                                .add((ThemeChangeEvent(value)));
+                                .read<ThemeBloc>()
+                                .add((ThemeChangedEvent(value)));
                           },
                         );
                       }
@@ -75,7 +82,7 @@ class _MainScreenState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Center(
-                      child: BlocBuilder<LogicBloc, SpeedOMeterState>(
+                      child: BlocBuilder<SpeedOMeterBloc, SpeedOMeterState>(
                           builder: (context, state) {
                         if (state is ResultState) {
                           inputValue = state.value.toString();
@@ -132,7 +139,7 @@ class _MainScreenState extends State<HomePage> {
                   InkWell(
                     onTap: () {
                       context
-                          .read<LogicBloc>()
+                          .read<SpeedOMeterBloc>()
                           .add((ClickEvent(double.parse(inputValue ?? '0.0'))));
                       SystemChannels.textInput.invokeMethod('TextInput.hide');
                     },
